@@ -17,17 +17,14 @@ class FlutterTemi {
   static const EventChannel _onLocationsUpdatedEventChannel =
       EventChannel('flutter_temi/on_locations_updated_stream');
 
-  static const EventChannel _nlpEventChannel =
-      EventChannel('flutter_temi/nlp_stream');
+  static const EventChannel _nlpEventChannel = EventChannel('flutter_temi/nlp_stream');
 
   static const EventChannel _onUserIntaeractionEventChannel =
       EventChannel('flutter_temi/on_user_interaction_stream');
 
-  static const EventChannel _ttsEventChannel =
-      EventChannel('flutter_temi/tts_stream');
+  static const EventChannel _ttsEventChannel = EventChannel('flutter_temi/tts_stream');
 
-  static const EventChannel _asrEventChannel =
-      EventChannel('flutter_temi/asr_stream');
+  static const EventChannel _asrEventChannel = EventChannel('flutter_temi/asr_stream');
 
   static const EventChannel _wakeupWordEventChannel =
       EventChannel('flutter_temi/wakeup_word_stream');
@@ -157,10 +154,8 @@ class FlutterTemi {
     await _channel.invokeMethod('temi_tilt_by', degrees);
   }
 
-  static Future<String> temiStartTelepresence(
-      String displayName, String peerId) async {
-    return await _channel
-        .invokeMethod('temi_start_telepresence', [displayName, peerId]);
+  static Future<String> temiStartTelepresence(String displayName, String peerId) async {
+    return await _channel.invokeMethod('temi_start_telepresence', [displayName, peerId]);
   }
 
   //${some['name']} ${some['userId']}
@@ -236,8 +231,7 @@ class FlutterTemi {
     return _onPrivacyModeChangedEventChannel.receiveBroadcastStream();
   }
 
-  static Stream<Map<String, dynamic>>
-      temiSubscribeToOnBatteryStatusChangedEvents() {
+  static Stream<Map<String, dynamic>> temiSubscribeToOnBatteryStatusChangedEvents() {
     return _onBatteryStatusChangedEventChannel.receiveBroadcastStream();
   }
 
@@ -250,6 +244,6 @@ class FlutterTemi {
   }
 
   static Stream<Map<String, dynamic>> temiSubscribeToRobotOnLiftedEvents() {
-    return _onRobotLiftedEventChannel.receiveBroadcastStream().map<Map<String, dynamic>>((element) => element);
+    return _onRobotLiftedEventChannel.receiveBroadcastStream().map<Map<String, dynamic>>((element) => jsonDecode(jsonEncode(element)));
   }
 }
