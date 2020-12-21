@@ -23,6 +23,8 @@ class FlutterTemiPlugin :  MethodCallHandler, FlutterPlugin, ActivityAware {
     public lateinit var application_context: Context
     public lateinit var activity: Activity
 
+    private lateinit var onRobotLiftedEventChannel: EventChannel
+
     private val robot: Robot = Robot.getInstance()
     private val goToLocationStatusChangedImpl: GoToLocationStatusChangedImpl = GoToLocationStatusChangedImpl()
     private val onBeWithMeStatusChangedImpl: OnBeWithMeStatusChangedImpl = OnBeWithMeStatusChangedImpl()
@@ -41,11 +43,16 @@ class FlutterTemiPlugin :  MethodCallHandler, FlutterPlugin, ActivityAware {
     private val onDetectionStateChangedListenerImpl: OnDetectionStateChangedListenerImpl = OnDetectionStateChangedListenerImpl()
     private val onRobotReadyListenerImpl: OnRobotReadyListenerImpl = OnRobotReadyListenerImpl()
 
+    private val onRobotLiftedListenerImpl: OnRobotLiftedListenerImpl = OnRobotLiftedListenerImpl()
+
     //Flutter plugin
    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
        channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_temi")
        channel.setMethodCallHandler(this);
        application_context = flutterPluginBinding.applicationContext
+
+        onRobotLiftedEventChannel = EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_temi/on_robot_lifted_stream")
+        onRobotLiftedEventChannel.setStreamHandler(onRobotLiftedListenerImpl)
 
    }
 

@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
-
 
 class FlutterTemi {
   //Single Method Channel
@@ -53,6 +53,9 @@ class FlutterTemi {
   static const EventChannel _onRobotReadyEventChannel =
       EventChannel('flutter_temi/on_robot_ready_stream');
 
+  static const EventChannel _onRobotLiftedEventChannel =
+      EventChannel('flutter_temi/on_robot_lifted_stream');
+
   static Future<String> get temiSerialNumber async {
     return await _channel.invokeMethod('temi_serial_number');
   }
@@ -93,10 +96,10 @@ class FlutterTemi {
     await _channel.invokeMethod('temi_showAppList');
   }
 
-
   static temiSpeakForce(String speech) async {
     await _channel.invokeMethod('temi_speak_force', speech);
   }
+
   static temiFinisheConverstaion() async {
     await _channel.invokeMethod('temi_finishe_conversation');
   }
@@ -104,7 +107,6 @@ class FlutterTemi {
   static temiTurnKioskMode() async {
     await _channel.invokeMethod('temi_turnKoiskMode');
   }
-
 
   static temiGoTo(String location) async {
     await _channel.invokeMethod('temi_goto', location);
@@ -245,5 +247,9 @@ class FlutterTemi {
 
   static Stream<bool> temiSubscribeToRobotReadyEvents() {
     return _onRobotReadyEventChannel.receiveBroadcastStream();
+  }
+
+  static Stream<Map<String, dynamic>> temiSubscribeToRobotOnLiftedEvents() {
+    return _onRobotLiftedEventChannel.receiveBroadcastStream().map<Map<String, dynamic>>((element) => element);
   }
 }
