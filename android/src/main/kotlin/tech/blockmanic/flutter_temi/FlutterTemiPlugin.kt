@@ -136,8 +136,8 @@ class FlutterTemiPlugin :  MethodCallHandler, FlutterPlugin, ActivityAware {
             val onRobotReadyEventChannel = EventChannel(registrar.messenger(), OnRobotReadyListenerImpl.STREAM_CHANNEL_NAME)
             onRobotReadyEventChannel.setStreamHandler(plugin.onRobotReadyListenerImpl)
 
-            val onRobotLiftedEventChannel = EventChannel(registrar.messenger(), OnRobotReadyListenerImpl.STREAM_CHANNEL_NAME)
-            onRobotLiftedEventChannel.setStreamHandler(plugin.onRobotLiftedListenerImpl)
+            // val onRobotLiftedEventChannel = EventChannel(registrar.messenger(), OnRobotReadyListenerImpl.STREAM_CHANNEL_NAME)
+            // onRobotLiftedEventChannel.setStreamHandler(plugin.onRobotLiftedListenerImpl)
         }
     }
 
