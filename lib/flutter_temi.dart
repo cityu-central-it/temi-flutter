@@ -1,8 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-
 
 class FlutterTemi {
   //Single Method Channel
@@ -18,17 +17,14 @@ class FlutterTemi {
   static const EventChannel _onLocationsUpdatedEventChannel =
       EventChannel('flutter_temi/on_locations_updated_stream');
 
-  static const EventChannel _nlpEventChannel =
-      EventChannel('flutter_temi/nlp_stream');
+  static const EventChannel _nlpEventChannel = EventChannel('flutter_temi/nlp_stream');
 
   static const EventChannel _onUserIntaeractionEventChannel =
       EventChannel('flutter_temi/on_user_interaction_stream');
 
-  static const EventChannel _ttsEventChannel =
-      EventChannel('flutter_temi/tts_stream');
+  static const EventChannel _ttsEventChannel = EventChannel('flutter_temi/tts_stream');
 
-  static const EventChannel _asrEventChannel =
-      EventChannel('flutter_temi/asr_stream');
+  static const EventChannel _asrEventChannel = EventChannel('flutter_temi/asr_stream');
 
   static const EventChannel _wakeupWordEventChannel =
       EventChannel('flutter_temi/wakeup_word_stream');
@@ -54,6 +50,9 @@ class FlutterTemi {
   static const EventChannel _onRobotReadyEventChannel =
       EventChannel('flutter_temi/on_robot_ready_stream');
 
+  static const EventChannel _onRobotLiftedEventChannel =
+      EventChannel('flutter_temi/on_robot_lifted_stream');
+
   static Future<String> get temiSerialNumber async {
     return await _channel.invokeMethod('temi_serial_number');
   }
@@ -68,6 +67,14 @@ class FlutterTemi {
 
   static Future<Map<dynamic, dynamic>> get temiBatteryData async {
     return await _channel.invokeMethod('temi_battery_data');
+  }
+
+  static Future<bool> temiIsHardButtonsDisabled() async {
+    return await _channel.invokeMethod('temi_is_hard_buttons_disabled');
+  }
+
+  static temiSetHardButtonsDisabled(bool disabled) async {
+    await _channel.invokeMethod('temi_set_hard_buttons_disabled', disabled);
   }
 
   static temiShowTopBar() async {
@@ -86,10 +93,10 @@ class FlutterTemi {
     await _channel.invokeMethod('temi_showAppList');
   }
 
-
   static temiSpeakForce(String speech) async {
     await _channel.invokeMethod('temi_speak_force', speech);
   }
+
   static temiFinisheConverstaion() async {
     await _channel.invokeMethod('temi_finishe_conversation');
   }
@@ -97,7 +104,6 @@ class FlutterTemi {
   static temiTurnKioskMode() async {
     await _channel.invokeMethod('temi_turnKoiskMode');
   }
-
 
   static temiGoTo(String location) async {
     await _channel.invokeMethod('temi_goto', location);
@@ -148,10 +154,8 @@ class FlutterTemi {
     await _channel.invokeMethod('temi_tilt_by', degrees);
   }
 
-  static Future<String> temiStartTelepresence(
-      String displayName, String peerId) async {
-    return await _channel
-        .invokeMethod('temi_start_telepresence', [displayName, peerId]);
+  static Future<String> temiStartTelepresence(String displayName, String peerId) async {
+    return await _channel.invokeMethod('temi_start_telepresence', [displayName, peerId]);
   }
 
   //${some['name']} ${some['userId']}
@@ -238,5 +242,9 @@ class FlutterTemi {
 
   static Stream<bool> temiSubscribeToRobotReadyEvents() {
     return _onRobotReadyEventChannel.receiveBroadcastStream();
+  }
+
+  static Stream<Map<String, dynamic>> temiSubscribeToRobotOnLiftedEvents() {
+    return _onRobotLiftedEventChannel.receiveBroadcastStream().map<Map<String, dynamic>>((element) => jsonDecode(jsonEncode(element)));
   }
 }

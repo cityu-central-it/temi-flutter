@@ -9,19 +9,21 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
-//import io.flutter.embedding.engine.plugins.FlutterPlugin
-//import io.flutter.embedding.engine.plugins.activity.ActivityAware
-//import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import com.robotemi.sdk.*
 import io.flutter.plugin.common.EventChannel
 import com.robotemi.sdk.TtsRequest
 
 
-class FlutterTemiPlugin :  MethodCallHandler  {
+class FlutterTemiPlugin :  MethodCallHandler, FlutterPlugin, ActivityAware {
 
     private lateinit var channel: MethodChannel
     public lateinit var application_context: Context
     public lateinit var activity: Activity
+
+    private lateinit var onRobotLiftedEventChannel: EventChannel
 
     private val robot: Robot = Robot.getInstance()
     private val goToLocationStatusChangedImpl: GoToLocationStatusChangedImpl = GoToLocationStatusChangedImpl()
@@ -41,34 +43,39 @@ class FlutterTemiPlugin :  MethodCallHandler  {
     private val onDetectionStateChangedListenerImpl: OnDetectionStateChangedListenerImpl = OnDetectionStateChangedListenerImpl()
     private val onRobotReadyListenerImpl: OnRobotReadyListenerImpl = OnRobotReadyListenerImpl()
 
-////Flutter plugin
-//    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-//        channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_temi")
-//        channel.setMethodCallHandler(this);
-//        application_context = flutterPluginBinding.applicationContext
-//
-//    }
-//
-//    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-//        channel.setMethodCallHandler(null)
-//    }
-////
-//    //ActivityAware
-//    override fun onDetachedFromActivity() {
-//        TODO("Not yet implemented")
-//    }
-////
-//    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-//        TODO("Not yet implemented")
-//    }
-////
-//    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-//        activity = binding.activity;
-//    }
-////
-//    override fun onDetachedFromActivityForConfigChanges() {
-//        TODO("Not yet implemented")
-//    }
+    private val onRobotLiftedListenerImpl: OnRobotLiftedListenerImpl = OnRobotLiftedListenerImpl()
+
+    //Flutter plugin
+   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+       channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_temi")
+       channel.setMethodCallHandler(this);
+       application_context = flutterPluginBinding.applicationContext
+
+        onRobotLiftedEventChannel = EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_temi/on_robot_lifted_stream")
+        onRobotLiftedEventChannel.setStreamHandler(onRobotLiftedListenerImpl)
+
+   }
+
+   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+       channel.setMethodCallHandler(null)
+   }
+
+   //ActivityAware
+   override fun onDetachedFromActivity() {
+       TODO("Not yet implemented")
+   }
+
+   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+       TODO("Not yet implemented")
+   }
+
+   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+       activity = binding.activity;
+   }
+
+   override fun onDetachedFromActivityForConfigChanges() {
+       TODO("Not yet implemented")
+   }
 
     companion object {
 
@@ -128,6 +135,9 @@ class FlutterTemiPlugin :  MethodCallHandler  {
 
             val onRobotReadyEventChannel = EventChannel(registrar.messenger(), OnRobotReadyListenerImpl.STREAM_CHANNEL_NAME)
             onRobotReadyEventChannel.setStreamHandler(plugin.onRobotReadyListenerImpl)
+
+            // val onRobotLiftedEventChannel = EventChannel(registrar.messenger(), OnRobotReadyListenerImpl.STREAM_CHANNEL_NAME)
+            // onRobotLiftedEventChannel.setStreamHandler(plugin.onRobotLiftedListenerImpl)
         }
     }
 
@@ -148,7 +158,7 @@ class FlutterTemiPlugin :  MethodCallHandler  {
         robot.addOnDetectionStateChangedListener(this.onDetectionStateChangedListenerImpl)
         robot.addOnRobotReadyListener(this.onRobotReadyListenerImpl)
 
-
+        robot.addOnRobotLiftedListener(this.onRobotLiftedListenerImpl)
     }
 
 
@@ -167,6 +177,15 @@ class FlutterTemiPlugin :  MethodCallHandler  {
             }
             "temi_battery_data" -> {
                 result.success(OnBatteryStatusChangedListenerImpl.batteryToMap(robot.batteryData!!))
+            }
+            "temi_set_hard_buttons_disabled" -> {
+                val disabled = call.arguments<Boolean>()
+                robot.isHardButtonsDisabled = disabled
+                result.success(disabled)
+            }
+            "temi_is_hard_buttons_disabled" -> {
+                result.success(robot.isHardButtonsDisabled)
+                result.success(true)
             }
             "temi_show_top_bar" -> {
                 robot.showTopBar()
