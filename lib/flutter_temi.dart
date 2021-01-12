@@ -66,7 +66,7 @@ class FlutterTemi {
     return await _channel.invokeMethod('temi_set_privacy_mode', privacyMode);
   }
 
-  static Future<Map<String, dynamic>> get temiBatteryData async {
+  static Future<Map<dynamic, dynamic>> get temiBatteryData async {
     return await _channel.invokeMethod('temi_battery_data');
   }
 
@@ -227,7 +227,7 @@ class FlutterTemi {
     return _onPrivacyModeChangedEventChannel.receiveBroadcastStream();
   }
 
-  static Stream<Map<String, dynamic>>
+  static Stream<Map<dynamic, dynamic>>
       temiSubscribeToOnBatteryStatusChangedEvents() {
     return _onBatteryStatusChangedEventChannel.receiveBroadcastStream();
   }
