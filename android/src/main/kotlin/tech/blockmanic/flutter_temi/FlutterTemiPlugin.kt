@@ -24,6 +24,7 @@ class FlutterTemiPlugin :  MethodCallHandler, FlutterPlugin, ActivityAware {
     public lateinit var activity: Activity
 
     private lateinit var onRobotLiftedEventChannel: EventChannel
+    private lateinit var onBatteryStatusChangedListenerEventChannel: EventChannel
 
     private val robot: Robot = Robot.getInstance()
     private val goToLocationStatusChangedImpl: GoToLocationStatusChangedImpl = GoToLocationStatusChangedImpl()
@@ -47,13 +48,17 @@ class FlutterTemiPlugin :  MethodCallHandler, FlutterPlugin, ActivityAware {
 
     //Flutter plugin
    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-       channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_temi")
-       channel.setMethodCallHandler(this);
-       application_context = flutterPluginBinding.applicationContext
+        channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_temi")
+        channel.setMethodCallHandler(this);
+        application_context = flutterPluginBinding.applicationContext
 
         onRobotLiftedEventChannel = EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_temi/on_robot_lifted_stream")
         onRobotLiftedEventChannel.setStreamHandler(onRobotLiftedListenerImpl)
 
+        onBatteryStatusChangedListenerEventChannel = EventChannel(
+            flutterPluginBinding.getFlutterEngine().getDartExecutor(),
+            OnBatteryStatusChangedListenerImpl.STREAM_CHANNEL_NAME)
+        onBatteryStatusChangedListenerEventChannel.setStreamHandler(onBatteryStatusChangedListenerImpl)
    }
 
    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -127,17 +132,11 @@ class FlutterTemiPlugin :  MethodCallHandler, FlutterPlugin, ActivityAware {
             val onPrivacyModeChangedListenerEventChannel = EventChannel(registrar.messenger(), OnPrivacyModeChangedListenerImpl.STREAM_CHANNEL_NAME)
             onPrivacyModeChangedListenerEventChannel.setStreamHandler(plugin.onPrivacyModeChangedListenerImpl)
 
-            val onBatteryStatusChangedListenerEventChannel = EventChannel(registrar.messenger(), OnBatteryStatusChangedListenerImpl.STREAM_CHANNEL_NAME)
-            onBatteryStatusChangedListenerEventChannel.setStreamHandler(plugin.onBatteryStatusChangedListenerImpl)
-
             val onDetectionStateChangedEventChannel = EventChannel(registrar.messenger(), OnDetectionStateChangedListenerImpl.STREAM_CHANNEL_NAME)
             onDetectionStateChangedEventChannel.setStreamHandler(plugin.onDetectionStateChangedListenerImpl)
 
             val onRobotReadyEventChannel = EventChannel(registrar.messenger(), OnRobotReadyListenerImpl.STREAM_CHANNEL_NAME)
             onRobotReadyEventChannel.setStreamHandler(plugin.onRobotReadyListenerImpl)
-
-            // val onRobotLiftedEventChannel = EventChannel(registrar.messenger(), OnRobotReadyListenerImpl.STREAM_CHANNEL_NAME)
-            // onRobotLiftedEventChannel.setStreamHandler(plugin.onRobotLiftedListenerImpl)
         }
     }
 
@@ -154,11 +153,11 @@ class FlutterTemiPlugin :  MethodCallHandler, FlutterPlugin, ActivityAware {
         //robot.addOnTelepresenceStatusChangedListener(this.onTelepresenceStatusChangedListenerImpl)
         //robot.addOnUsersUpdatedListener(this.onUsersUpdatedListenerImpl)
         robot.addOnPrivacyModeStateChangedListener(this.onPrivacyModeChangedListenerImpl)
-        robot.addOnBatteryStatusChangedListener(this.onBatteryStatusChangedListenerImpl)
         robot.addOnDetectionStateChangedListener(this.onDetectionStateChangedListenerImpl)
         robot.addOnRobotReadyListener(this.onRobotReadyListenerImpl)
 
         robot.addOnRobotLiftedListener(this.onRobotLiftedListenerImpl)
+        robot.addOnBatteryStatusChangedListener(this.onBatteryStatusChangedListenerImpl)
     }
 
 

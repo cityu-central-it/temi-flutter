@@ -231,9 +231,10 @@ class FlutterTemi {
     return _onPrivacyModeChangedEventChannel.receiveBroadcastStream();
   }
 
-  static Stream<Map<dynamic, dynamic>>
-      temiSubscribeToOnBatteryStatusChangedEvents() {
-    return _onBatteryStatusChangedEventChannel.receiveBroadcastStream();
+  static Stream<Map<String, dynamic>> temiSubscribeToOnBatteryStatusChangedEvents() {
+    return _onBatteryStatusChangedEventChannel
+        .receiveBroadcastStream()
+        .map<Map<String, dynamic>>((element) => jsonDecode(jsonEncode(element)));
   }
 
   static Stream<dynamic> temiSubscribeToDetectionStateChangedEvents() {
@@ -245,6 +246,8 @@ class FlutterTemi {
   }
 
   static Stream<Map<String, dynamic>> temiSubscribeToRobotOnLiftedEvents() {
-    return _onRobotLiftedEventChannel.receiveBroadcastStream().map<Map<String, dynamic>>((element) => jsonDecode(jsonEncode(element)));
+    return _onRobotLiftedEventChannel
+        .receiveBroadcastStream()
+        .map<Map<String, dynamic>>((element) => jsonDecode(jsonEncode(element)));
   }
 }
