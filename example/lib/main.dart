@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_temi/flutter_temi.dart';
 
 void main() {
@@ -80,15 +79,14 @@ class _MyAppState extends State<MyApp> {
             FlatButton(
               child: Text('Call Cyrus'),
               onPressed: () async {
-                await FlutterTemi.temiStartTelepresence(
-                    "${some['name']}", "${some['userId']}");
+                await FlutterTemi.temiStartTelepresence("${some['name']}", "${some['userId']}");
               },
             ),
             FlatButton(
-              child: Text('Show All Apps'),
-              onPressed: () async {
-                await FlutterTemi.temiShowAppList();
-              }),
+                child: Text('Show All Apps'),
+                onPressed: () async {
+                  await FlutterTemi.temiShowAppList();
+                }),
             FlatButton(
                 child: Text('Turn Kiosk'),
                 onPressed: () async {
@@ -110,7 +108,7 @@ class _MyAppState extends State<MyApp> {
             FlatButton(
               child: Text('Goto Victor'),
               onPressed: () async {
-                await  FlutterTemi.temiGoTo('victor');
+                await FlutterTemi.temiGoTo('victor');
               },
             ),
             FlatButton(
@@ -174,8 +172,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void SubTemi() {
-    sub = FlutterTemi.temiSubscribeToDetectionStateChangedEvents()
-        .listen((event) {
+    sub = FlutterTemi.temiSubscribeToDetectionStateChangedEvents().listen((event) {
       if (event == 2) {
         print("user Deteched ${event}");
         IsBusyMode == true;
