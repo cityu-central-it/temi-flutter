@@ -3,8 +3,6 @@ package tech.blockmanic.flutter_temi
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import com.robotemi.sdk.Robot
-import com.robotemi.sdk.TtsRequest
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -49,6 +47,7 @@ class FlutterTemiPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
     private val onBatteryStatusChangedListenerImpl: OnBatteryStatusChangedListenerImpl = OnBatteryStatusChangedListenerImpl()
     private val onDetectionStateChangedListenerImpl: OnDetectionStateChangedListenerImpl = OnDetectionStateChangedListenerImpl()
     private val onRobotReadyListenerImpl: OnRobotReadyListenerImpl = OnRobotReadyListenerImpl()
+    private val onRobotLiftedListenerImpl: OnRobotLiftedListenerImpl = OnRobotLiftedListenerImpl();
 
 
     companion object {
@@ -123,7 +122,6 @@ class FlutterTemiPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
         robot.addOnPrivacyModeStateChangedListener(this.onPrivacyModeChangedListenerImpl)
         robot.addOnDetectionStateChangedListener(this.onDetectionStateChangedListenerImpl)
         robot.addOnRobotReadyListener(this.onRobotReadyListenerImpl)
-
         robot.addOnRobotLiftedListener(this.onRobotLiftedListenerImpl)
         robot.addOnBatteryStatusChangedListener(this.onBatteryStatusChangedListenerImpl)
     }
@@ -339,6 +337,9 @@ class FlutterTemiPlugin : MethodCallHandler, FlutterPlugin, ActivityAware {
 
         val onRobotReadyEventChannel = EventChannel(binding.binaryMessenger, OnRobotReadyListenerImpl.STREAM_CHANNEL_NAME)
         onRobotReadyEventChannel.setStreamHandler(plugin.onRobotReadyListenerImpl)
+
+        val onRobotLiftedEventChannel = EventChannel(binding.binaryMessenger, OnRobotLiftedListenerImpl.STREAM_CHANNEL_NAME)
+        onRobotLiftedEventChannel.setStreamHandler(plugin.onRobotLiftedListenerImpl)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
