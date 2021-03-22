@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 class FlutterTemi {
   //Single Method Channel
-  static const MethodChannel _channel = const MethodChannel('flutter_temi');
+  static const MethodChannel _channel = MethodChannel('flutter_temi');
 
   //Event Channel for Stream
   static const EventChannel _onBeWithMeEventChannel =
@@ -103,6 +103,10 @@ class FlutterTemi {
 
   static temiTurnKioskMode() async {
     await _channel.invokeMethod('temi_turnKoiskMode');
+  }
+
+  static temiRepose() async {
+    await _channel.invokeMethod('temi_repose');
   }
 
   static temiGoTo(String location) async {
