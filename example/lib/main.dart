@@ -14,10 +14,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool IsBusyMode = false;
-  StreamSubscription sub;
+  bool isBusyMode = false;
+  StreamSubscription? sub;
 
-  Map some;
+  Map? some;
 
   @override
   void initState() {
@@ -53,8 +53,11 @@ class _MyAppState extends State<MyApp> {
     });
 
     some = await FlutterTemi.userInfo;
-
-    print("Found user info ${some['name']} ${some['userId']}");
+    if (some != null) {
+      print("Found user info ${some!['name']} ${some!['userId']}");
+    } else {
+      print("Cannot find user info");
+    }
     SubTemi();
   }
 
@@ -67,20 +70,21 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Wrap(
           children: <Widget>[
-            new StreamBuilder(
+            StreamBuilder(
                 stream:
                     FlutterTemi.temiSubscribeToOnLocationStatusChangeEvents(),
                 builder: (BuildContext context, snapshot) {
                   if (!snapshot.hasData)
                     return const Text('loading Location');
                   else {
-                    return new Text(snapshot.data.toString());
+                    return Text(snapshot.data.toString());
                   }
                 }),
             FlatButton(
               child: Text('Call Cyrus'),
               onPressed: () async {
-                await FlutterTemi.temiStartTelepresence("${some['name']}", "${some['userId']}");
+                await FlutterTemi.temiStartTelepresence(
+                    "${some!['name']}", "${some!['userId']}");
               },
             ),
             FlatButton(
@@ -177,11 +181,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   void SubTemi() {
-    sub = FlutterTemi.temiSubscribeToDetectionStateChangedEvents().listen((event) {
+    sub = FlutterTemi.temiSubscribeToDetectionStateChangedEvents()
+        .listen((event) {
       if (event == 2) {
         print("user Deteched ${event}");
-        IsBusyMode == true;
-        sub.cancel();
+        isBusyMode = true;
+        sub!.cancel();
       }
     });
   }

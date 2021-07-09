@@ -17,14 +17,17 @@ class FlutterTemi {
   static const EventChannel _onLocationsUpdatedEventChannel =
       EventChannel('flutter_temi/on_locations_updated_stream');
 
-  static const EventChannel _nlpEventChannel = EventChannel('flutter_temi/nlp_stream');
+  static const EventChannel _nlpEventChannel =
+      EventChannel('flutter_temi/nlp_stream');
 
   static const EventChannel _onUserIntaeractionEventChannel =
       EventChannel('flutter_temi/on_user_interaction_stream');
 
-  static const EventChannel _ttsEventChannel = EventChannel('flutter_temi/tts_stream');
+  static const EventChannel _ttsEventChannel =
+      EventChannel('flutter_temi/tts_stream');
 
-  static const EventChannel _asrEventChannel = EventChannel('flutter_temi/asr_stream');
+  static const EventChannel _asrEventChannel =
+      EventChannel('flutter_temi/asr_stream');
 
   static const EventChannel _wakeupWordEventChannel =
       EventChannel('flutter_temi/wakeup_word_stream');
@@ -117,7 +120,7 @@ class FlutterTemi {
     return await _channel.invokeMethod('temi_save_location', location);
   }
 
-  static Future<List<String>> temiGetLocations() async {
+  static Future<List<String>?> temiGetLocations() async {
     return await _channel.invokeListMethod('temi_get_locations');
   }
 
@@ -158,8 +161,10 @@ class FlutterTemi {
     await _channel.invokeMethod('temi_tilt_by', degrees);
   }
 
-  static Future<String> temiStartTelepresence(String displayName, String peerId) async {
-    return await _channel.invokeMethod('temi_start_telepresence', [displayName, peerId]);
+  static Future<String> temiStartTelepresence(
+      String displayName, String peerId) async {
+    return await _channel
+        .invokeMethod('temi_start_telepresence', [displayName, peerId]);
   }
 
   //${some['name']} ${some['userId']}
@@ -167,11 +172,11 @@ class FlutterTemi {
     return await _channel.invokeMethod('temi_user_info');
   }
 
-  static Future<List<Map<String, dynamic>>> get allContacts async {
+  static Future<List<Map<String, dynamic>>?> get allContacts async {
     return await _channel.invokeListMethod('temi_get_contacts');
   }
 
-  static Future<List<Map<String, dynamic>>> get recentCalls async {
+  static Future<List<Map<String, dynamic>>?> get recentCalls async {
     return await _channel.invokeListMethod('temi_get_recent_calls');
   }
 
@@ -188,7 +193,7 @@ class FlutterTemi {
   }
 
   static Stream<String> temiSubscribeToOnBeWithMeEvents() {
-    return _onBeWithMeEventChannel.receiveBroadcastStream();
+    return _onBeWithMeEventChannel.receiveBroadcastStream() as Stream<String>;
   }
 
   static Stream<dynamic> temiSubscribeToOnLocationStatusChangeEvents() {
@@ -196,19 +201,22 @@ class FlutterTemi {
   }
 
   static Stream<List<dynamic>> temiSubscribeToOnLocationsUpdatedEvents() {
-    return _onLocationsUpdatedEventChannel.receiveBroadcastStream();
+    return _onLocationsUpdatedEventChannel.receiveBroadcastStream()
+        as Stream<List<dynamic>>;
   }
 
   static Stream<String> temiSubscribeToNlpEvents() {
-    return _nlpEventChannel.receiveBroadcastStream();
+    return _nlpEventChannel.receiveBroadcastStream() as Stream<String>;
   }
 
   static Stream<bool> temiSubscribeToOnUserInteractionEvents() {
-    return _onUserIntaeractionEventChannel.receiveBroadcastStream();
+    return _onUserIntaeractionEventChannel.receiveBroadcastStream()
+        as Stream<bool>;
   }
 
   static Stream<Map<String, dynamic>> temiSubscribeToTtsEvents() {
-    return _ttsEventChannel.receiveBroadcastStream();
+    return _ttsEventChannel.receiveBroadcastStream()
+        as Stream<Map<String, dynamic>>;
   }
 
   static Stream<dynamic> temiSubscribeToAsrEvents() {
@@ -216,11 +224,13 @@ class FlutterTemi {
   }
 
   static Stream<Map<String, dynamic>> temiSubscribeToWakeupWordEvents() {
-    return _wakeupWordEventChannel.receiveBroadcastStream();
+    return _wakeupWordEventChannel.receiveBroadcastStream()
+        as Stream<Map<String, dynamic>>;
   }
 
   static Stream<bool> temiSubscribeToOnConstraintBeWithStatusChangedEvents() {
-    return _constraintBeWithStatusEventChannel.receiveBroadcastStream();
+    return _constraintBeWithStatusEventChannel.receiveBroadcastStream()
+        as Stream<bool>;
   }
 
 //  static Stream<Map<String, dynamic>> temiSubscribeToOnTelepresenceStatusChangedEvents() {
@@ -232,13 +242,16 @@ class FlutterTemi {
 //  }
 
   static Stream<bool> temiSubscribeToOnPrivacyModeChangedEvents() {
-    return _onPrivacyModeChangedEventChannel.receiveBroadcastStream();
+    return _onPrivacyModeChangedEventChannel.receiveBroadcastStream()
+        as Stream<bool>;
   }
 
-  static Stream<Map<String, dynamic>> temiSubscribeToOnBatteryStatusChangedEvents() {
+  static Stream<Map<String, dynamic>>
+      temiSubscribeToOnBatteryStatusChangedEvents() {
     return _onBatteryStatusChangedEventChannel
         .receiveBroadcastStream()
-        .map<Map<String, dynamic>>((element) => jsonDecode(jsonEncode(element)));
+        .map<Map<String, dynamic>>(
+            (element) => jsonDecode(jsonEncode(element)));
   }
 
   static Stream<dynamic> temiSubscribeToDetectionStateChangedEvents() {
@@ -246,12 +259,13 @@ class FlutterTemi {
   }
 
   static Stream<bool> temiSubscribeToRobotReadyEvents() {
-    return _onRobotReadyEventChannel.receiveBroadcastStream();
+    return _onRobotReadyEventChannel.receiveBroadcastStream() as Stream<bool>;
   }
 
   static Stream<Map<String, dynamic>> temiSubscribeToRobotOnLiftedEvents() {
     return _onRobotLiftedEventChannel
         .receiveBroadcastStream()
-        .map<Map<String, dynamic>>((element) => jsonDecode(jsonEncode(element)));
+        .map<Map<String, dynamic>>(
+            (element) => jsonDecode(jsonEncode(element)));
   }
 }
